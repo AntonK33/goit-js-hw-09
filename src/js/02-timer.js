@@ -10,58 +10,54 @@ const dataMinutes = document.querySelector('[data-minutes]');
 const dataSeconds = document.querySelector('[data-seconds]');
 const divTimer = document.querySelector('.timer');
 const divField = document.querySelectorAll('.field');
- //console.log(buttonStart);
  
-//divTimer.style.display = 'flex';
-//divTimer.style.justifyContent = 'center';
-
-//for (let i = 0; length = divField.length; i++) {/divField[i].style.display = 'flex',
-// divField[i].style.flexDirection = 'column';
-//  divField[i].style.margin = '20px';
-//  divField[i].style.backgroundColor = 'grey';
-//  divField[i].style.padding = '10px';
-//  divField[i].style.borderRadius = '20px';
-//}
 
 const currentDate = new Date();
 let timeConvert = {};
 let inputValue = null;
-
-const options = {
+let timeId = null;
+const options =     {
     enableTime: true,
     time_24hr: true,
     defaultDate: new Date(),
     minuteIncrement: 1,
     onClose(selectedDates) {
     console.log(selectedDates[0].getTime());
-    inputValue = selectedDates[0] - currentDate;
-      if (selectedDates[0].getTime() < currentDate.getTime()) {
+      inputValue = selectedDates[0] - currentDate; 
+      if (selectedDates[0].getTime() < currentDate.getTime() ) {
       Notiflix.Notify.failure('Please choose a date in the future')('Please choose a date in the future');
-      buttonStart.setAttribute('disabled', 'true');
-    } else {
-      buttonStart.removeAttribute('disabled');
-    }
+        buttonStart.setAttribute('disabled', 'disabled');
+      } else  {      
+        buttonStart.removeAttribute('disabled');        
+    }             
     },
- 
 };
+
 flatpickr(inputDate, options);
 buttonStart.addEventListener("click", btnStartHandler);
-buttonStart.setAttribute('disabled', 'true');
+buttonStart.setAttribute('disabled', 'disabled');
+
 flatpickr(inputDate, options);
 
 function btnStartHandler() {
-  setInterval(() => {
-    if (inputValue <= 0) {
+  buttonStart.setAttribute('disabled', 'disabled');
+  inputDate.setAttribute('disabled', 'disabled');
+   timeId = setInterval(() => {
+     if (inputValue <= 0) {
+      clearInterval(timeId)
       return;
     }
     timeConvert = convertMs(inputValue);
-    dataDays.textContent = timeConvert.days.toString().padStart(2, '0');
-    dataHours.textContent = timeConvert.hours.toString().padStart(2, '0');
-    dataMinutes.textContent = timeConvert.minutes.toString().padStart(2, '0');
-    dataSeconds.textContent = timeConvert.seconds.toString().padStart(2, '0');
+    dataDays.textContent = addLeadingZero(timeConvert.days);
+    dataHours.textContent = addLeadingZero(timeConvert.hours);
+    dataMinutes.textContent = addLeadingZero(timeConvert.minutes);
+    dataSeconds.textContent = addLeadingZero(timeConvert.seconds);
     inputValue -= 1000;
   }, 1000);
 
+}
+function addLeadingZero(value) {
+  return value.toString().padStart(2, '0');
 }
 
 function convertMs(ms) {
@@ -83,6 +79,3 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-//console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-//console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-//console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
